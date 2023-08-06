@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-using DiabloDiscordBot.DiabloStuff;
-using DiabloDiscordBot.WebStuff;
+using DiabloBotShared;
 
 namespace DiabloDiscordBot.DiscordStuff.DatabaseStuff {
 	internal class d4ArmoryScraper {
-		public static d4ArmoryScraper Service => SingletonContainer.I.GetService<d4ArmoryScraper>();
+		public static d4ArmoryScraper Singleton => SingletonContainer.I.GetService<d4ArmoryScraper>();
 
 		internal void Scrape(EventDetails details) {
 			var url = "https://d4armory.io/api/events/recent";
@@ -18,7 +12,7 @@ namespace DiabloDiscordBot.DiscordStuff.DatabaseStuff {
 
 			string message;
 			try {
-				message = HttpHelper.Service.GetBodyText(url);
+				message = HttpHelper.Singleton.GetBodyText(url);
 			} catch (Exception ex) {
 				message = ex.Message;
 				error = true;

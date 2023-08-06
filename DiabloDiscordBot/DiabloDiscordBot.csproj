@@ -13,4 +13,8 @@
     <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.0-preview.5.23280.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DiabloBotShared\DiabloBotShared.csproj" />
+  </ItemGroup>
+
 </Project>

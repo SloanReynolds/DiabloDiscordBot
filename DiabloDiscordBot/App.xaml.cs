@@ -14,7 +14,7 @@ namespace DiabloDiscordBot {
 	public partial class App : Application {
 		void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {
 			// Process unhandled exception
-			ILogger.Service.ErrorLine(e.Exception.Message + "\n" + e.Exception.StackTrace);
+			ILogger.Singleton.ErrorLine(e.Exception.Message + "\n" + e.Exception.StackTrace);
 
 			// Prevent default unhandled exception processing
 			e.Handled = true;

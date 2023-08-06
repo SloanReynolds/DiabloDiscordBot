@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DiabloDiscordBot.DiscordStuff {
+﻿namespace DiabloBotShared {
 	public class SingletonContainer {
 		private static SingletonContainer _instance = new SingletonContainer();
 		private Dictionary<Type, object> _services = new();

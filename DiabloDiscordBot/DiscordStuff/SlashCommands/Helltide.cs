@@ -7,7 +7,7 @@ using DiabloDiscordBot.DiscordStuff.DatabaseStuff;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands.Attributes;
 using DSharpPlus.SlashCommands;
-using DiabloDiscordBot.DiabloStuff;
+using DiabloBotShared;
 
 namespace DiabloDiscordBot.DiscordStuff.SlashCommands {
 	[SlashCommandGroup("helltide", "Helltide Information/Setup Commands")]
@@ -28,7 +28,7 @@ namespace DiabloDiscordBot.DiscordStuff.SlashCommands {
 
 			await ctx.FollowUpAsync($"All set! Helltide Pings will go to the roles: {hellRole.Mention} in channel:{hellChannel.Mention}", true);
 
-			ILogger.Service.WriteLine("Helltide Setup " + ctx.Guild.Id);
+			ILogger.Singleton.WriteLine("Helltide Setup " + ctx.Guild.Id);
 		}
 
 		[SlashCommand("remove", "Removes alerts for Helltides.")]

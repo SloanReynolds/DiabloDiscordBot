@@ -1,9 +1,4 @@
-﻿using System;
-using DiabloDiscordBot.WebStuff;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Collections.Generic;
-using DiabloDiscordBot.DiabloStuff;
+﻿using System.Collections.Generic;
 
 namespace DiabloDiscordBot {
 	public record D4ArmoryRecentEvents {

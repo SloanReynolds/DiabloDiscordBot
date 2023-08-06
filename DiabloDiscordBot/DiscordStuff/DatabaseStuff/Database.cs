@@ -1,13 +1,11 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DiabloDiscordBot.DiabloStuff;
+using DiabloBotShared;
 using DiabloDiscordBot.DiscordStuff.DatabaseStuff.Attributes;
 using DSharpPlus.Entities;
 using Microsoft.Data.Sqlite;
-using Microsoft.Windows.Themes;
 
 namespace DiabloDiscordBot.DiscordStuff.DatabaseStuff {
 	internal class Database {

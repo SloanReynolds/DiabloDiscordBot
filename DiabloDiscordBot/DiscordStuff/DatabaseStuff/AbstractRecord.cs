@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DiabloBotShared;
 using DiabloDiscordBot.DiscordStuff.DatabaseStuff.Attributes;
 
 namespace DiabloDiscordBot.DiscordStuff.DatabaseStuff {
@@ -44,7 +45,7 @@ namespace DiabloDiscordBot.DiscordStuff.DatabaseStuff {
 			_database.Open();
 			_database.SaveNew(this);
 			_database.Close();
-			ILogger.Service.WriteLine($"'{TableAttribute.GetTableName(this)}' Record Saved");
+			ILogger.Singleton.WriteLine($"'{TableAttribute.GetTableName(this)}' Record Saved");
 		}
 	}
 }

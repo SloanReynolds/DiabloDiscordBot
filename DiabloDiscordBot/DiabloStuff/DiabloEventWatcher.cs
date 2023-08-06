@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using DiabloBotShared;
 using DiabloDiscordBot.DiscordStuff;
 using DiabloDiscordBot.DiscordStuff.DatabaseStuff;
 
@@ -27,21 +23,21 @@ namespace DiabloDiscordBot.DiabloStuff {
 		private void _Run() {
 			_isRunning = true;
 			try {
-				ILogger.Service.WriteLine("Watching for World Events");
+				ILogger.Singleton.WriteLine("Watching for World Events");
 				while (!_cts.IsCancellationRequested) {
 					EventDetails[] events = new EventDetails[] {
 						HelltideEvent.GetDetails(),
 						LegionEvent.GetDetails(),
-						WorldBossEvent.GetDetails(),
-						WorldBossEvent.GetDetails(true),
+						WorldbossEvent.GetDetails(),
+						WorldbossEvent.GetDetails(true),
 					};
 
 					for (int i = 0; i < events.Length; i++) {
 						var details = events[i];
 						if (details.MinutesUntilNext <= details.AlertMinutes) {
-							ILogger.Service.WriteLine(details.AlertType.ToString());
+							ILogger.Singleton.WriteLine(details.AlertType.ToString());
 							if (_discord.SendAlertsToAll(details)) {
-								d4ArmoryScraper.Service.Scrape(details);
+								d4ArmoryScraper.Singleton.Scrape(details);
 							}
 						}
 					}
@@ -49,7 +45,7 @@ namespace DiabloDiscordBot.DiabloStuff {
 					Thread.Sleep(30 * 1000);
 				}
 			} finally {
-				ILogger.Service.WriteLine("Stopped watching for World Events");
+				ILogger.Singleton.WriteLine("Stopped watching for World Events");
 				_isRunning = false;
 			}
 		}

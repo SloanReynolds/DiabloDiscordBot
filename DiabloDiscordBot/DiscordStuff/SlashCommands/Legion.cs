@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DiabloDiscordBot.DiabloStuff;
+using DiabloBotShared;
 using DiabloDiscordBot.DiscordStuff.DatabaseStuff;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
@@ -28,7 +28,7 @@ namespace DiabloDiscordBot.DiscordStuff.SlashCommands {
 
 			await ctx.FollowUpAsync($"All set! Legion Pings will go to the roles: {legionRole.Mention} in channel:{legionChannel.Mention}", true);
 
-			ILogger.Service.WriteLine("Legion Setup " + ctx.Guild.Id);
+			ILogger.Singleton.WriteLine("Legion Setup " + ctx.Guild.Id);
 		}
 
 		[SlashCommand("remove", "Removes current settings for Legion alerts.")]

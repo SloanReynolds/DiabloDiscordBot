@@ -1,20 +1,14 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using System.Xml;
+using DiabloBotShared;
 using DiabloDiscordBot.DiabloStuff;
 using DiabloDiscordBot.DiscordStuff.DatabaseStuff;
 using DiabloDiscordBot.DiscordStuff.SlashCommands;
 using DSharpPlus;
-using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
-using Microsoft.Data.Sqlite;
-using Microsoft.VisualBasic;
 
-namespace DiabloDiscordBot.DiscordStuff
-{
-    internal class Discord {
+namespace DiabloDiscordBot.DiscordStuff {
+	internal class Discord {
 		private DiabloEventWatcher _diablo = SingletonContainer.I.GetService<DiabloEventWatcher>();
 		private Database _database => SingletonContainer.I.GetService<Database>();
 		private DiabloBotConsole _console => SingletonContainer.I.GetService<DiabloBotConsole>();
@@ -63,7 +57,7 @@ namespace DiabloDiscordBot.DiscordStuff
 			var role = guild.GetRole(roleId);
 			var channel = guild.GetChannel(channelId);
 
-			ILogger.Service.WriteLine($"Sending Alert to {guild.Id} -> {type}:'{message}'");
+			ILogger.Singleton.WriteLine($"Sending Alert to {guild.Id} -> {type}:'{message}'");
 			_client
 				.SendMessageAsync(channel, $"{role.Mention} - {message}");
 
@@ -83,7 +77,7 @@ namespace DiabloDiscordBot.DiscordStuff
 			_client = new DiscordClient(config);
 			var slash = _client.UseSlashCommands();
 			slash.RegisterCommands<SlashCommandsMisc>();
-			slash.RegisterCommands<Worldboss>();
+			slash.RegisterCommands<SlashCommands.Worldboss>();
 			slash.RegisterCommands<Helltide>();
 			slash.RegisterCommands<Legion>();
 			//slash.RegisterCommands<SlashCommands>();
@@ -99,7 +93,7 @@ namespace DiabloDiscordBot.DiscordStuff
 
 		private void _Connected(Task task) {
 			_diablo.Begin();
-			ILogger.Service.WriteLine("Discord Client Connected!");
+			ILogger.Singleton.WriteLine("Discord Client Connected!");
 			_console.Connected_Success();
 			_isConnected = true;
 		}
@@ -112,7 +106,7 @@ namespace DiabloDiscordBot.DiscordStuff
 
 		private void _Disconnected(Task task) {
 			_diablo.CancelLoop();
-			ILogger.Service.WriteLine("Discord Client Disconnected!");
+			ILogger.Singleton.WriteLine("Discord Client Disconnected!");
 			_console.Disconnected_Success();
 			_isConnected = false;
 		}

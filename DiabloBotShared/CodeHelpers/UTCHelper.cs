@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DiabloDiscordBot.DiabloStuff {
+﻿namespace DiabloBotShared {
 	public static class UTCHelper {
 		public static long UnixNow => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 		public static long UnixMinutesAgo(int minutes) => DateTimeOffset.UtcNow.ToUnixTimeSeconds() - (minutes * 60);
@@ -23,7 +17,7 @@ namespace DiabloDiscordBot.DiabloStuff {
 			return dateTime;
 		}
 
-		internal static object ToUnixTimestamp(DateTime next) {
+		public static object ToUnixTimestamp(DateTime next) {
 			return new DateTimeOffset(next).ToUnixTimeSeconds();
 		}
 	}

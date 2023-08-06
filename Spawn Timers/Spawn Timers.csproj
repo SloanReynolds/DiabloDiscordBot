@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DiabloDiscordBot\DiabloDiscordBot.csproj" />
+    <ProjectReference Include="..\DiabloBotShared\DiabloBotShared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

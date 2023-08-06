@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Net.Http;
 using System.Windows;
+using DiabloBotShared;
 using DiabloDiscordBot.DiabloStuff;
 using DiabloDiscordBot.DiscordStuff;
 using DiabloDiscordBot.DiscordStuff.DatabaseStuff;
-using DiabloDiscordBot.WebStuff;
-using Newtonsoft.Json;
 
 namespace DiabloDiscordBot {
 	/// <summary>
@@ -54,7 +50,7 @@ namespace DiabloDiscordBot {
 		}
 
 		private void Button_NextWorldBossMinutes(object sender, RoutedEventArgs e) {
-			WorldBossEvent.GetDetails();
+			WorldbossEvent.GetDetails();
 		}
 
 		private void _Connect() {
@@ -84,47 +80,49 @@ namespace DiabloDiscordBot {
 		}
 
 		private void Button_CompareWorldBossSpawns(object sender, RoutedEventArgs e) {
-			var url = "https://d4armory.io/api/events/all";
-			var json = HttpHelper.Service.GetBodyText(url);
-			var stuff = JsonConvert.DeserializeObject<D4ArmoryEvent[]>(json).Where(e => e.EventName != "Legion" && e.EventName != "Helltide" && e.EventName != "UNKNOWN");
+			_log.ErrorLine("Oops this does nothing");
+			//var url = "https://d4armory.io/api/events/all";
+			//var json = HttpHelper.Service.GetBodyText(url);
+			//var stuff = JsonConvert.DeserializeObject<D4ArmoryEvent[]>(json).Where(e => e.EventName != "Legion" && e.EventName != "Helltide" && e.EventName != "UNKNOWN");
 
-			WorldBossEvent.GetDetails();
-			var history = WorldBossEvent.History;
+			//WorldbossEvent.GetDetails();
+			//var history = WorldbossEvent.History;
 
-			List<(WorldBossEventData data, D4ArmoryEvent armory)> pairs = new();
-			foreach (var data in history) {
-				bool found = false;
-				foreach (var armory in stuff) {
-					if (armory.Time.AddMinutes(-5) < data.DateTime && armory.Time.AddMinutes(5) > data.DateTime) {
-						//Found a match
-						pairs.Add((data, armory));
-						found = true;
-						break;
-					}
-				}
-				if (!found)
-					pairs.Add((data, null));
-			}
+			//List<(WorldBossEventData data, D4ArmoryEvent armory)> pairs = new();
+			//foreach (var data in history) {
+			//	bool found = false;
+			//	foreach (var armory in stuff) {
+			//		if (armory.Time.AddMinutes(-5) < data.DateTime && armory.Time.AddMinutes(5) > data.DateTime) {
+			//			//Found a match
+			//			pairs.Add((data, armory));
+			//			found = true;
+			//			break;
+			//		}
+			//	}
+			//	if (!found)
+			//		pairs.Add((data, null));
+			//}
 
-			foreach (var pair in pairs) {
-				if (pair.armory == null) {
-					_log.WriteLine($"{pair.data.Boss}   |   null");
-					continue;
-				}
+			//foreach (var pair in pairs) {
+			//	if (pair.armory == null) {
+			//		_log.WriteLine($"{pair.data.Boss}   |   null");
+			//		continue;
+			//	}
 
-				if (pair.data.Boss == pair.armory.Boss) {
-					_log.WriteLine($"{pair.data.Boss}   |   {pair.armory.Boss}");
-					continue;
-				}
+			//	if (pair.data.Boss == pair.armory.Boss) {
+			//		_log.WriteLine($"{pair.data.Boss}   |   {pair.armory.Boss}");
+			//		continue;
+			//	}
 
-				_log.ErrorLine($"{pair.data.Boss}   |   {pair.armory.Boss}");
-			}
+			//	_log.ErrorLine($"{pair.data.Boss}   |   {pair.armory.Boss}");
+			//}
 
-			{ }
+			//{ }
 		}
 
 		private void Button_ReloadPattern(object sender, RoutedEventArgs e) {
-			WorldBoss.LoadPatternFile();
+			_log.ErrorLine("Oops this does nothing");
+			//Worldboss.LoadPatternFile();
 		}
 
 		private void Button_OpenDBFolder(object sender, RoutedEventArgs e) {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DiabloDiscordBot.DiabloStuff;
+using DiabloBotShared;
 using DiabloDiscordBot.DiscordStuff.DatabaseStuff;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
@@ -28,7 +28,7 @@ namespace DiabloDiscordBot.DiscordStuff.SlashCommands {
 
 			await ctx.FollowUpAsync($"All set! Worldboss Pings will go to the roles: {bossRole.Mention} in channel:{bossChannel.Mention}", true);
 
-			ILogger.Service.WriteLine("Worldboss Setup " + ctx.Guild.Id);
+			ILogger.Singleton.WriteLine("Worldboss Setup " + ctx.Guild.Id);
 		}
 
 		[SlashCommand("remove", "Removes current settings for Worldboss alerts.")]
@@ -42,7 +42,7 @@ namespace DiabloDiscordBot.DiscordStuff.SlashCommands {
 		[SlashCommand("when", "Lets you know when the next Worldboss event will occur.")]
 		public async Task WorldBossWhen(InteractionContext ctx) {
 			await ctx.DeferAsync(true);
-			EventDetails evt = WorldBossEvent.GetDetails();
+			EventDetails evt = WorldbossEvent.GetDetails();
 			await ctx.FollowUpAsync($"{evt.Message}", true);
 		}
 	}

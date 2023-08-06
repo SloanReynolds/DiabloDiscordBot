@@ -1,21 +1,23 @@
 ﻿using System;
-using System.Media;
+using System.Collections.Generic;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using System.Windows.Media;
-using DiabloDiscordBot;
-using DiabloDiscordBot.DiscordStuff;
-using DiabloDiscordBot.WebStuff;
-using Microsoft.Extensions.Logging;
+using DiabloBotShared;
 
 namespace Spawn_Timers {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
 	public partial class MainWindow : Window {
-		private const int WORLDBOSS_ALARM_INTERVAL = 10;
+		public static MainWindow Singleton => SingletonContainer.I.GetService<MainWindow>();
+
 		private Timer _tick;
+		private AlertAlarm _alarm = new();
+
+		private List<Timer> _expiringTimers = new();
+		private Color _origBG;
 
 		public MainWindow() {
 			InitializeComponent();
@@ -23,42 +25,29 @@ namespace Spawn_Timers {
 			SingletonContainer.I
 				.RegisterService<HttpHelper>(new HttpHelper())
 				.RegisterService<EventStore>(new EventStore())
+				.RegisterService<MainWindow>(this)
 			;
 
 			_tick = new Timer(Tick, null, 0, 1000);
+			_origBG = ((SolidColorBrush)this.Background).Color;
+
+			//FlashBackground(Colors.Green);
 			//_ = new Timer(Tick, null, 0, Timeout.Infinite);
 		}
 
 		private void Tick(object? state) {
 			Application.Current.Dispatcher.Invoke(() => {
-				var ev = EventStore.Service;
+				var ev = EventStore.Singleton;
 				timeHelltide.Content = TimespanFormat(ev.NextHelltide);
 				timeWorldboss.Content = TimespanFormat(ev.NextWorldboss);
 				timeLegion.Content = TimespanFormat(ev.NextLegion);
 
 				labelWorldboss.Content = $"World Boss ({ev.NextWorldbossName}):";
 
-				if (_isWorldbossAlarm
-					&& (ev.NextWorldboss - DateTime.Now).TotalMinutes < WORLDBOSS_ALARM_INTERVAL) {
-					ActivateWorldbossAlarm();
-				}
+				_alarm.CheckTriggers(ev.NextHelltide, ev.NextWorldboss, ev.NextLegion);
 
 				ev.RefreshIfNeeded();
-
-				//_tick = new Timer(Tick, null, 1000, Timeout.Infinite);
 			});
-		}
-
-		private void ActivateWorldbossAlarm() {
-			if (DateTime.Now < DontRingUntil)
-				return;
-
-			DontRingUntil = DateTime.Now.AddMinutes(WORLDBOSS_ALARM_INTERVAL * 2);
-
-			var flasher = new FlashWindowHelper(Application.Current);
-			flasher.FlashApplicationWindow();
-
-			CustomAudio.PlayWorldbossAlarm();
 		}
 
 		private string TimespanFormat(DateTime next) {
@@ -81,18 +70,39 @@ namespace Spawn_Timers {
 			}
 		}
 
-		private bool _isWorldbossAlarm = false;
-		private DateTime DontRingUntil = DateTime.Now.AddMinutes(-20);
 		private void WorldbossAlarm_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e) {
-			_isWorldbossAlarm = !_isWorldbossAlarm;
+			_alarm.ToggleWorldbossAlarm();
 
-			if (_isWorldbossAlarm) {
+			if (_alarm.IsWorldbossAlarmOn) {
 				toggleWorldbossAlarm.Foreground = new SolidColorBrush(Colors.Gold);
 				toggleWorldbossAlarm.Content = "🔔";
 			} else {
 				toggleWorldbossAlarm.Foreground = new SolidColorBrush(Colors.DimGray);
 				toggleWorldbossAlarm.Content = "🔕";
 			}
+		}
+
+		private void _ChangeBackgroundColor(Color color) {
+			Application.Current.Dispatcher.Invoke(() => {
+				this.Background = new SolidColorBrush(color);
+			});
+		}
+
+		internal void FlashBackground(Color color) {
+			int cycleHalf = 400;
+			int cycles = 5;
+
+			for (int i = 0; i <= cycles; i++) {
+				var cycleStart = i * cycleHalf * 2;
+				_AddExpTimer((state) => { _ChangeBackgroundColor(color); }, cycleStart);
+				_AddExpTimer((state) => { _ChangeBackgroundColor(_origBG); }, cycleStart + cycleHalf);
+			}
+
+			_AddExpTimer((state) => { _expiringTimers.Clear(); }, cycleHalf * (cycles + 1));
+		}
+
+		private void _AddExpTimer(TimerCallback action, int delay) {
+			_expiringTimers.Add(new Timer(action, null, delay, Timeout.Infinite));
 		}
 	}
 }

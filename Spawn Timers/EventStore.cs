@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Text.Json;
-using System.Threading;
+using DiabloBotShared;
 using DiabloDiscordBot;
-using DiabloDiscordBot.DiabloStuff;
-using DiabloDiscordBot.DiscordStuff;
-using DiabloDiscordBot.WebStuff;
 
 namespace Spawn_Timers {
 	class EventStore {
-		public static EventStore Service => SingletonContainer.I.GetService<EventStore>();
+		public static EventStore Singleton => SingletonContainer.I.GetService<EventStore>();
 
 		public event Action UpdateReceived;
 
@@ -29,19 +26,23 @@ namespace Spawn_Timers {
 		public void RefreshNow() {
 			try {
 				var url = "https://d4armory.io/api/events/recent";
-				var json = HttpHelper.Service.GetBodyText(url);
+				var json = HttpHelper.Singleton.GetBodyText(url);
 				var update = JsonSerializer.Deserialize<D4ArmoryRecentEvents>(json, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true })!;
 
 				NextWorldboss = UTCHelper.UnixTimeStampToDateTime(update.Boss.Expected);
 				NextWorldbossName = update.Boss.ExpectedName;
 				NextLegion = UTCHelper.UnixTimeStampToDateTime(update.Legion.Expected);
 			} catch (Exception ex) {
-				NextWorldboss = DateTime.Now.AddMinutes(60);
-				NextWorldbossName = "Oopsies";
-				NextLegion = DateTime.Now.AddMinutes(30);
+				_RefreshFallback();
 			}
 
 			NextHelltide = HelltideEvent.GetNextDateTime();
+		}
+
+		private void _RefreshFallback() {
+			NextWorldboss = WorldbossEvent.GetNextDateTime();
+			NextWorldbossName = "Oopsies";
+			NextLegion = LegionEvent.GetNextDateTime();
 		}
 	}
 }

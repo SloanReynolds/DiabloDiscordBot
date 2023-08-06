@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace DiabloDiscordBot.DiabloStuff {
-	internal class WorldBossEvent {
+﻿namespace DiabloBotShared {
+	public class WorldbossEvent {
 		private const int _alertMinutes = 20;
 		private const int _alertMinutes2 = 5;
 
@@ -15,30 +12,25 @@ namespace DiabloDiscordBot.DiabloStuff {
 			_next = _history[0].GetNext();
 		}
 
-		//public static EventDetails FallBackDetails(bool secondWarning = false) {
-		//	while (DateTime.Now >= _next.DateTime) {
-		//		_history.Add(_next);
-		//		_next = _next.GetNext();
-		//		ILogger.Service.WriteLine($"????? - Fell Back");
-		//	}
-
-		//	int minutes = (int)(_next.DateTime - DateTime.Now).TotalMinutes;
-		//	ILogger.Service.WriteLine($"Worldboss (Unknown?): {minutes}");
-
-		//	return new EventDetails(AlertType.WorldBoss, minutes, $"World Boss '{_next.Boss}' <t:{UTCHelper.ToUnixTimestamp(_next.DateTime)}:R>!", secondWarning ? _alertMinutes2 : _alertMinutes);
-		//}
-
 		public static EventDetails GetDetails(bool secondWarning = false) {
+			_UpdateNext();
+
+			int minutes = (int)(_next.DateTime - DateTime.Now).TotalMinutes;
+
+			return new EventDetails(AlertType.WorldBoss, minutes, $"World Boss <t:{UTCHelper.ToUnixTimestamp(_next.DateTime)}:R>!", secondWarning ? _alertMinutes2 : _alertMinutes);
+		}
+
+		public static DateTime GetNextDateTime() {
+			_UpdateNext();
+
+			return _next.DateTime;
+		}
+
+		private static void _UpdateNext() {
 			while (DateTime.Now >= _next.DateTime) {
 				_history.Add(_next);
 				_next = _next.GetNext();
-				ILogger.Service.WriteLine($"{_next.Boss}");
 			}
-
-			int minutes = (int)(_next.DateTime - DateTime.Now).TotalMinutes;
-			ILogger.Service.WriteLine($"Worldboss ({_next.Boss}): {minutes}");
-
-			return new EventDetails(AlertType.WorldBoss, minutes, $"World Boss '{_next.Boss}' <t:{UTCHelper.ToUnixTimestamp(_next.DateTime)}:R>!", secondWarning ? _alertMinutes2 : _alertMinutes);
 		}
 
 		private static List<WorldBossEventData> _history = new() {
@@ -61,7 +53,7 @@ namespace DiabloDiscordBot.DiabloStuff {
 
 
 		public DateTime DateTime { get; }
-		public WorldBoss.Type Boss => WorldBoss.Pattern[_bossPatternIndex];
+		//public Worldboss.Type Boss => Worldboss.Pattern[_bossPatternIndex];
 
 		private int _timePatternIndex { get; }
 		private int _bossPatternIndex { get; }
@@ -74,14 +66,14 @@ namespace DiabloDiscordBot.DiabloStuff {
 
 		public WorldBossEventData GetNext() {
 			int index = this._timePatternIndex == _timePattern.Length - 1 ? 0 : this._timePatternIndex + 1;
-			int bossIndex = this._bossPatternIndex == WorldBoss.Pattern.Length - 1 ? 0 : this._bossPatternIndex + 1;
+			//int bossIndex = this._bossPatternIndex == Worldboss.Pattern.Length - 1 ? 0 : this._bossPatternIndex + 1;
 
 			var time = this.DateTime.AddMinutes(_timePattern[index]);
 			if (_NeedsTwoHours(time)) {
 				time = time.AddHours(2);
 			}
 
-			return new WorldBossEventData(time, index, bossIndex);
+			return new WorldBossEventData(time, index, -1);
 		}
 
 		private static bool _NeedsTwoHours(DateTime dt) {
