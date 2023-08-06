@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DiabloDiscordBot.DiabloStuff {
-	internal static class UTCHelper {
+	public static class UTCHelper {
 		public static long UnixNow => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 		public static long UnixMinutesAgo(int minutes) => DateTimeOffset.UtcNow.ToUnixTimeSeconds() - (minutes * 60);
 
@@ -21,6 +21,10 @@ namespace DiabloDiscordBot.DiabloStuff {
 			DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 			dateTime = dateTime.AddSeconds(unixTimeStamp).ToLocalTime();
 			return dateTime;
+		}
+
+		internal static object ToUnixTimestamp(DateTime next) {
+			return new DateTimeOffset(next).ToUnixTimeSeconds();
 		}
 	}
 }

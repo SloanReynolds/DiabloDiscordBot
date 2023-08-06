@@ -11,17 +11,18 @@ using Microsoft.Windows.Themes;
 
 namespace DiabloDiscordBot.DiscordStuff.DatabaseStuff {
 	internal class Database {
+		public static readonly string LocalAppPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData, Environment.SpecialFolderOption.Create)}\\DiabloDiscordBot";
+
 		//Oh yes, I am quite aware that this is rather poopy.
 		//Rudimentary databases tend to be.
 		private SqliteConnection _conn;
 
 		private const string DB_FILENAME = "DiabloBase.db";
-		private string _localAppDataPath => $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData, Environment.SpecialFolderOption.Create)}\\DiabloDiscordBot";
-		private string _dbFilePath => $"{_localAppDataPath}\\{DB_FILENAME}";
+		private string _dbFilePath => $"{LocalAppPath}\\{DB_FILENAME}";
 
 		public Database() {
-			if (!Directory.Exists(_localAppDataPath)) {
-				Directory.CreateDirectory(_localAppDataPath);
+			if (!Directory.Exists(LocalAppPath)) {
+				Directory.CreateDirectory(LocalAppPath);
 			}
 			if (!File.Exists(_dbFilePath)) {
 				_WriteAllTables();

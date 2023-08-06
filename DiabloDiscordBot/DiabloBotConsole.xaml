@@ -29,10 +29,13 @@
 				</Style>
 			</WrapPanel.Resources>
 
-			<Button x:Name="btnConnect" Content="Connect" Click="Button_Connect" IsEnabled="False"/>
+			<Button x:Name="btnConnect" Content="Connect" Click="Button_Connect"/>
 			<Button x:Name="btnDisconnect" Content="Disconnect" Click="Button_Disconnect" IsEnabled="False"/>
 			<Button Content="Test Random Output" HorizontalAlignment="Left" Click="Button_TestOutput"/>
 			<Button Content="Get Next Worldboss Minutes" Click="Button_NextWorldBossMinutes"/>
+			<Button Content="Compare World Boss Spawns" Click="Button_CompareWorldBossSpawns"/>
+			<Button Content="Reload Pattern File" Click="Button_ReloadPattern"/>
+			<Button Content="Open DB Folder in Explorer" Click="Button_OpenDBFolder"/>
 		</WrapPanel>
 	</Grid>
 </Window>

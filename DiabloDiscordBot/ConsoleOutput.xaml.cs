@@ -40,6 +40,11 @@ namespace DiabloDiscordBot {
 			newText.Text = text;
 
 			stackPanel.Children.Add(newText);
+
+			while (stackPanel.Children.Count >= 201) {
+				stackPanel.Children.RemoveAt(0);
+			}
+
 			scrollViewer.ScrollToBottom();
 		}
 	}

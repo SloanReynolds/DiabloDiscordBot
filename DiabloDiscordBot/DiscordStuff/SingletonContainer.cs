@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DiabloDiscordBot.DiscordStuff {
-	internal class SingletonContainer {
+	public class SingletonContainer {
 		private static SingletonContainer _instance = new SingletonContainer();
 		private Dictionary<Type, object> _services = new();
 

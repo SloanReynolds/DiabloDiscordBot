@@ -5,27 +5,34 @@ using System.Threading.Tasks;
 using System.Xml;
 using DiabloDiscordBot.DiabloStuff;
 using DiabloDiscordBot.DiscordStuff.DatabaseStuff;
+using DiabloDiscordBot.DiscordStuff.SlashCommands;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 using Microsoft.Data.Sqlite;
 using Microsoft.VisualBasic;
 
-namespace DiabloDiscordBot.DiscordStuff {
-	internal class Discord {
+namespace DiabloDiscordBot.DiscordStuff
+{
+    internal class Discord {
 		private DiabloEventWatcher _diablo = SingletonContainer.I.GetService<DiabloEventWatcher>();
 		private Database _database => SingletonContainer.I.GetService<Database>();
 		private DiabloBotConsole _console => SingletonContainer.I.GetService<DiabloBotConsole>();
 		private DiscordClient _client;
 		private bool _isConnected = false;
 
-		internal void SendAlertsToAll(EventDetails eventDetails) {
+		internal bool SendAlertsToAll(EventDetails eventDetails) {
+			bool any = false;
 			foreach (var guildSetting in _database.AllGuildSettings()) {
-				SendAlert(guildSetting, eventDetails);
+				if (SendAlert(guildSetting, eventDetails) && !any) {
+					any = true;
+				}
 			}
+
+			return any;
 		}
 
-		internal void SendAlert(GuildRecord guildSettings, EventDetails eventDetails) {
+		internal bool SendAlert(GuildRecord guildSettings, EventDetails eventDetails) {
 			var guild = _client.GetGuildAsync(guildSettings.GuildID).GetAwaiter().GetResult();
 
 			var type = eventDetails.AlertType;
@@ -35,8 +42,9 @@ namespace DiabloDiscordBot.DiscordStuff {
 			var previous = _database.GetAlerts(guild, type, cooldown);
 			if (previous.Any()) {
 				//There are some alerts here, which means we've sent an alert of this type to this guild recently... ixnay bitch
-				return;
+				return false;
 			}
+
 
 			var roleId = guildSettings.BossRole;
 			var channelId = guildSettings.BossChannelID;
@@ -49,7 +57,8 @@ namespace DiabloDiscordBot.DiscordStuff {
 			}
 
 			if (roleId == 0 || channelId == 0) //We don't want any alerts of this type, thanks much!
-				return;
+				return false;
+
 
 			var role = guild.GetRole(roleId);
 			var channel = guild.GetChannel(channelId);
@@ -58,7 +67,9 @@ namespace DiabloDiscordBot.DiscordStuff {
 			_client
 				.SendMessageAsync(channel, $"{role.Mention} - {message}");
 
+
 			new AlertRecord(guild.Id, type, message).SaveNew();
+			return true;
 		}
 
 		internal void Connect() {
@@ -71,7 +82,10 @@ namespace DiabloDiscordBot.DiscordStuff {
 
 			_client = new DiscordClient(config);
 			var slash = _client.UseSlashCommands();
-			slash.RegisterCommands<SlashCommands>(415716624319119369);
+			slash.RegisterCommands<SlashCommandsMisc>();
+			slash.RegisterCommands<Worldboss>();
+			slash.RegisterCommands<Helltide>();
+			slash.RegisterCommands<Legion>();
 			//slash.RegisterCommands<SlashCommands>();
 			slash.SlashCommandErrored += async (s, e) => {
 				if (e.Exception is SlashExecutionChecksFailedException slex) {

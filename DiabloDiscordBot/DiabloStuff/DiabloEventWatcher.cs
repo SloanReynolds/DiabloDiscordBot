@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using DiabloDiscordBot.DiscordStuff;
+using DiabloDiscordBot.DiscordStuff.DatabaseStuff;
 
 namespace DiabloDiscordBot.DiabloStuff {
 	internal class DiabloEventWatcher {
@@ -39,7 +40,9 @@ namespace DiabloDiscordBot.DiabloStuff {
 						var details = events[i];
 						if (details.MinutesUntilNext <= details.AlertMinutes) {
 							ILogger.Service.WriteLine(details.AlertType.ToString());
-							_discord.SendAlertsToAll(details);
+							if (_discord.SendAlertsToAll(details)) {
+								d4ArmoryScraper.Service.Scrape(details);
+							}
 						}
 					}
 
